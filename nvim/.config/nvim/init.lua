@@ -103,6 +103,8 @@ do
   vim.pack.add { gh 'lewis6991/gitsigns.nvim' }
   require('gitsigns').setup {}
 
+  vim.pack.add { gh 'bullets-vim/bullets.nvim' }
+  require('bullets').setup {}
   -- vim.pack.add { gh 'edeneast/nightfox.nvim' }
   -- local palettes = {
   --   nightfox = {
@@ -339,7 +341,7 @@ do
       default = { 'lsp', 'path', 'snippets' },
     },
 
-    snippets = { preset = 'luasnip' },
+    -- snippets = { preset = 'luasnip' },
 
     fuzzy = { implementation = 'lua' },
 
