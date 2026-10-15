@@ -1,16 +1,12 @@
 do
   vim.loader.enable()
 
-  vim.cmd 'filetype plugin indent on'
-
   vim.g.mapleader = ' '
   vim.g.maplocalleader = ' '
 
-  vim.g.have_nerd_font = false
-
   vim.o.number = true
+  vim.o.relativenumber = true
 
-  vim.o.wrap = false
   vim.o.mouse = 'a'
 
   vim.o.showmode = false
@@ -18,6 +14,7 @@ do
   vim.schedule(function() vim.o.clipboard = 'unnamedplus' end)
 
   vim.o.breakindent = true
+  vim.o.wrap = false
 
   vim.o.undofile = true
 
@@ -35,6 +32,8 @@ do
 
   vim.o.list = true
   vim.opt.listchars = { tab = '» ', trail = '·', nbsp = '␣' }
+
+  -- vim.o.inccommand = 'split'
 
   vim.o.cursorline = false
 
@@ -74,6 +73,12 @@ do
   vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right window' })
   vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
   vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
+
+  -- vim.api.nvim_create_autocmd('TextYankPost', {
+  --   desc = 'Highlight when yanking (copying) text',
+  --   group = vim.api.nvim_create_augroup('kickstart-highlight-yank', { clear = true }),
+  --   callback = function() vim.hl.on_yank() end,
+  -- })
 end
 
 do
@@ -94,100 +99,324 @@ end
 
 ---@param repo string
 ---@return string
-local function gh(repo) return 'https://github.com/' .. repo end
+-- local function gh(repo) return 'https://github.com/' .. repo end
+local gh = function(x) return 'https://github.com/' .. x end
 
 do
   vim.pack.add { gh 'NMAC427/guess-indent.nvim' }
   require('guess-indent').setup {}
 
   vim.pack.add { gh 'lewis6991/gitsigns.nvim' }
-  require('gitsigns').setup {}
+  require('gitsigns').setup {
+    signs = {},
+  }
 
-  vim.pack.add { gh 'bullets-vim/bullets.nvim' }
-  require('bullets').setup {}
-  -- vim.pack.add { gh 'edeneast/nightfox.nvim' }
+  vim.pack.add { gh 'edeneast/nightfox.nvim' }
+  vim.pack.add { gh 'rainglow/vim' }
+  vim.pack.add { gh 'harshrajsachan/omni.nvim' }
+  vim.pack.add { gh 'jwbaldwin/oscura.nvim' }
+
+  local palettes = {
+    nightfox = {
+      -- Terminal colors
+      black = {
+        base = '#002831',
+        bright = '#26444d',
+        dim = '#0e1011',
+      },
+      red = {
+        base = '#e63853',
+        bright = '#e63853',
+        dim = '#e63853',
+      },
+      green = {
+        base = '#5eb83c',
+        bright = '#5eb83c',
+        dim = '#5eb83c',
+      },
+      yellow = {
+        base = '#cd9409',
+        bright = '#a57706',
+        dim = '#cd9409',
+      },
+      blue = {
+        base = '#359ddf',
+        bright = '#359ddf',
+        dim = '#005794',
+      },
+      magenta = {
+        base = '#d75cff',
+        bright = '#d75cff',
+        dim = '#d75cff',
+      },
+      cyan = {
+        base = '#4b73a2',
+        bright = '#359ddf',
+        dim = '#005794',
+      },
+      white = {
+        base = '#dcdcdc',
+        bright = '#ffffff',
+        dim = '#7c8fa4',
+      },
+
+      orange = '#cd9409',
+      pink = '#d75cff',
+
+      -- Background hierarchy
+      bg0 = '#0e1011',
+      bg1 = '#0e1011',
+      bg2 = '#002831',
+      bg3 = '#26444d',
+      bg4 = '#26444d',
+
+      -- Foreground hierarchy
+      fg0 = '#ffffff',
+      fg1 = '#e2e2e2',
+      fg2 = '#dcdcdc',
+      fg3 = '#7c8fa4',
+
+      -- Selection and comments
+      sel0 = '#26444d',
+      sel1 = '#005794',
+      comment = '#708284',
+    },
+  }
   -- local palettes = {
   --   nightfox = {
-  --     -- Terminal colors
-  --     black = {
-  --       base = "#002831",
-  --       bright = "#26444d",
-  --       dim = "#0e1011",
-  --     },
-  --     red = {
-  --       base = "#e63853",
-  --       bright = "#e63853",
-  --       dim = "#e63853",
-  --     },
-  --     green = {
-  --       base = "#5eb83c",
-  --       bright = "#5eb83c",
-  --       dim = "#5eb83c",
-  --     },
-  --     yellow = {
-  --       base = "#cd9409",
-  --       bright = "#a57706",
-  --       dim = "#cd9409",
-  --     },
-  --     blue = {
-  --       base = "#359ddf",
-  --       bright = "#359ddf",
-  --       dim = "#005794",
-  --     },
-  --     magenta = {
-  --       base = "#d75cff",
-  --       bright = "#d75cff",
-  --       dim = "#d75cff",
-  --     },
-  --     cyan = {
-  --       base = "#4b73a2",
-  --       bright = "#359ddf",
-  --       dim = "#005794",
-  --     },
-  --     white = {
-  --       base = "#dcdcdc",
-  --       bright = "#ffffff",
-  --       dim = "#7c8fa4",
-  --     },
-  --
-  --     orange = "#cd9409",
-  --     pink = "#d75cff",
-  --
-  --     -- Background hierarchy
-  --     bg0 = "#0e1011",
-  --     bg1 = "#0e1011",
-  --     bg2 = "#002831",
-  --     bg3 = "#26444d",
-  --     bg4 = "#26444d",
-  --
-  --     -- Foreground hierarchy
-  --     fg0 = "#ffffff",
-  --     fg1 = "#e2e2e2",
-  --     fg2 = "#dcdcdc",
-  --     fg3 = "#7c8fa4",
-  --
-  --     -- Selection and comments
-  --     sel0 = "#26444d",
-  --     sel1 = "#005794",
-  --     comment = "#708284",
+  --     black = '#000000',
+  --     red = '#FF0000', -- FL RED
+  --     green = '#00A645', -- GREEN
+  --     yellow = '#FFBF00', -- YELLOW
+  --     blue = '#0000FF', -- BLUE
+  --     magenta = '#FF00FF', -- MAGENTA
+  --     cyan = '#006666', -- CYAN
+  --     white = '#FFFFFF',
+  --     orange = '#FF6600', -- FL ORANGE
+  --     pink = '#FF00FF', -- FL MAGENTA
   --   },
   -- }
-  --
-  -- require('nightfox').setup {
-  --   palettes = palettes,
-  --   groups = {
-  --     nightfox = {
-  --       WinSeparator = { fg = "bg2" }
-  --     }
-  --   }
-  -- }
 
-  vim.pack.add { 'https://github.com/nvim-mini/mini.base16' }
-  vim.cmd.colorscheme 'minifox'
+  require('nightfox').setup {
+    options = {
+      transparent = true,
+    },
+    palettes = palettes,
+    groups = {
+      nightfox = {
+        WinSeparator = { fg = 'bg2' },
+        StatusLine = { bg = '#000000' },
+      },
+    },
+  }
+
+  vim.pack.add { gh 'nvim-mini/mini.base16' }
+  vim.pack.add { gh 'zenbones-theme/zenbones.nvim' }
+  vim.pack.add { gh 'rktjmp/lush.nvim' }
+
+  vim.g.nordbones_transparent_background = true
+  vim.g.neobones_transparent_background = true
+  vim.g.duckbones_transparent_background = true
+
+  vim.pack.add { gh 'andreypopp/vim-colors-plain' }
+
+  vim.pack.add { gh 'oskarnurm/koda.nvim' }
+  vim.pack.add { gh 'mcauley-penney/techbase.nvim' }
+  vim.pack.add { gh 'vague-theme/vague.nvim' }
+  -- vim.pack.add { gh 'm4xshen/hardtime.nvim' }
+  -- require('hardtime').setup()
+  require('koda').setup {
+    -- transparent = true,
+  }
+  require('techbase').setup {
+    italic_comments = false,
+    -- transparent = true,
+    hl_overrides = {},
+  }
+  vim.pack.add { gh 'sirzif/tzfn.nvim' }
+  vim.pack.add { gh 'webhooked/kanso.nvim' }
+  vim.pack.add { gh 'wtfox/luna.nvim' }
+  vim.pack.add { gh 'WeiTing1991/suannhai.nvim' }
+  require('suannhai').setup {}
+  vim.pack.add { gh 'kyzabuilds/xeno.nvim' }
+  local xeno = require 'xeno'
+
+  -- Method 1: Use xeno.setup() for direct configuration
+  xeno.color('aurora', '#3ddc97')
+  xeno.color('teal', '#2ec4b6')
+  xeno.color('cyan', '#4fd9e8')
+  xeno.color('ice', '#8ecae6')
+  xeno.color('frost', '#a8e6cf')
+  xeno.color('violet', '#9b7fd4')
+  xeno.color('indigo', '#7c93e0')
+  xeno.color('glow_pink', '#e39fc2')
+
+  xeno.theme('polarized', {
+    background = '#0a141c',
+    accent = '#3ddc97',
+    foreground = '#c9dde2',
+    properties = {
+      contrast = 0.10,
+      chroma = 0.05,
+      lightness = -0.05,
+      variation = 0.10,
+    },
+
+    highlights = {
+      editor = {
+        CursorLineNr = { fg = '@frost.100', bold = true },
+        MatchParen = { fg = '@frost.100', bold = true },
+        Visual = { bg = xeno.opaque('@aurora.500', 0.18) },
+        CursorLine = { bg = xeno.opaque('@teal.600', 0.06) },
+        Search = { bg = xeno.opaque('@cyan.400', 0.25), fg = '@foreground.50' },
+        IncSearch = { bg = xeno.opaque('@frost.300', 0.35), fg = '@background.950' },
+      },
+
+      syntax = {
+        Comment = { fg = '@foreground.400', italic = true },
+        Keyword = { fg = '@violet.300' },
+        Conditional = { fg = '@indigo.300' },
+        Function = { fg = '@teal.300' },
+        Type = { fg = '@cyan.200' },
+        String = { fg = '@aurora.100' },
+        Number = { fg = '@frost.100' },
+        Boolean = { fg = '@frost.100' },
+        Variable = { fg = '@foreground.300' },
+        Property = { fg = '@ice.300' },
+        Operator = { fg = '@cyan.300' },
+        Punctuation = { fg = '@foreground.400' },
+
+        ['@keyword'] = { link = 'Keyword' },
+        ['@keyword.return'] = { link = 'Keyword' },
+        ['@keyword.function'] = { link = 'Conditional' },
+        ['@keyword.conditional'] = { link = 'Conditional' },
+        ['@keyword.repeat'] = { link = 'Conditional' },
+        ['@keyword.operator'] = { fg = '@cyan.300' },
+        ['@keyword.import'] = { fg = '@teal.400' },
+
+        ['@function'] = { link = 'Function' },
+        ['@function.builtin'] = { fg = '@cyan.100' },
+
+        ['@type'] = { link = 'Type' },
+
+        ['@string'] = { link = 'String' },
+        ['@string.escape'] = { fg = '@ice.100' },
+
+        ['@number'] = { link = 'Number' },
+        ['@boolean'] = { link = 'Boolean' },
+
+        ['@constant'] = { fg = '@frost.200' },
+        ['@constant.builtin'] = { fg = '@glow_pink.100', bold = true },
+
+        ['@variable'] = { link = 'Variable' },
+        ['@variable.builtin'] = { fg = '@indigo.200' },
+
+        ['@property'] = { link = 'Property' },
+
+        ['@constructor'] = { fg = '@foreground.400' },
+
+        ['@operator'] = { link = 'Operator' },
+        ['@punctuation'] = { link = 'Punctuation' },
+        ['@punctuation.bracket'] = { link = 'Punctuation' },
+        ['@punctuation.delimiter'] = { link = 'Punctuation' },
+
+        ['@lsp.type.variable'] = { link = '@variable' },
+        ['@lsp.type.property'] = { link = '@property' },
+        ['@lsp.type.function'] = { link = '@function' },
+        ['@lsp.type.type'] = { link = '@type' },
+        ['@lsp.type.keyword'] = { link = '@keyword' },
+        ['@lsp.mod.declaration'] = { clear = true },
+        ['@lsp.typemod.property.declaration'] = { link = '@property' },
+      },
+    },
+  })
+  xeno.theme('sapphire', {
+    -- background = '#1a2332',
+    background = '#000000',
+    accent = '#4d8fd6',
+    properties = {
+      variation = 0.60,
+      lightness = -0.10,
+      chroma = 0.30,
+    },
+  })
+  -- vim.pack.add { { src = 'https://github.com/kepano/flexoki', name = 'flexoki' } }
+  require('tzfn').setup {
+    enable = {
+      terminal = true,
+    },
+    styles = {
+      transparency = true,
+    },
+  }
+  vim.pack.add { gh 'rjshkhr/shadow.nvim' }
+  vim.pack.add { gh 'stevearc/oil.nvim' }
+  require('oil').setup()
+  vim.pack.add { gh 'embark-theme/vim' }
+  vim.pack.add { gh 'yorumicolors/yorumi.nvim' }
+  vim.pack.add { gh 'dasupradyumna/midnight.nvim' }
+  vim.pack.add { gh 'dchinmay2/alabaster.nvim' }
+  vim.cmd.colorscheme 'control-room'
+  -- vim.cmd.colorscheme 'usgc-reticle'
 
   vim.pack.add { gh 'nvim-mini/mini.nvim' }
 
+  -- vim.o.fillchars = 'eob: ,fold: ,foldopen:,foldsep: ,foldinner: ,foldclose:'
+  vim.pack.add { gh 'soemre/commentless.nvim' }
+  require('commentless').setup {}
+  -- vim.opt.foldminlines = 0 -- Allow folding/hiding single lines
+  vim.opt.fillchars = 'fold: ' -- Remove the trailing dots
+  vim.keymap.set('n', '<leader>1', function() require('commentless').toggle() end)
+  --
+  -- vim.keymap.set('n', '<leader>z', function() require('commentless').toggle() end)
+  -- vim.pack.add { gh 'chrisgrieser/nvim-origami' }
+  --
+  -- vim.opt.foldlevel = 99
+  -- vim.opt.foldlevelstart = 99
+  --
+  -- require('origami').setup {
+  --   useLspFoldsWithTreesitterFallback = {
+  --     enabled = true,
+  --     foldmethodIfNeitherIsAvailable = 'indent', ---@type string|fun(bufnr: number): string
+  --   },
+  --   autoFold = {
+  --     enabled = true,
+  --     kinds = { 'comment', 'imports' }, ---@type lsp.FoldingRangeKind[]
+  --   },
+  -- }
+  -- vim.api.nvim_create_autocmd('LspNotify', {
+  --   callback = function(ctx)
+  --     if ctx.data.method ~= 'textDocument/didOpen' then return end
+  --     if vim.bo[ctx.buf].buftype ~= '' then return end
+  --     vim.schedule(function()
+  --       local client = vim.lsp.get_clients({ bufnr = ctx.buf, id = ctx.data.client_id })[1]
+  --       if not client or not client:supports_method 'textDocument/foldingRange' then return end
+  --       local winid = vim.fn.bufwinid(ctx.buf)
+  --       if winid == -1 then return end
+  --       local tries = 0
+  --       local function try()
+  --         if not vim.api.nvim_win_is_valid(winid) or vim.api.nvim_win_get_buf(winid) ~= ctx.buf then return end
+  --         tries = tries + 1
+  --         local closed = vim.api.nvim_win_call(winid, function()
+  --           vim.fn.foldlevel(1) -- force creation of the LSP fold state
+  --           pcall(vim.lsp.foldclose, 'comment', winid)
+  --           return vim.fn.foldclosed(1)
+  --         end)
+  --         if closed == -1 and tries < 10 then vim.defer_fn(try, 200) end
+  --       end
+  --       try()
+  --     end)
+  --   end,
+  -- })
+
+  -- Better Around/Inside textobjects
+  --
+  -- Examples:
+  --  - va)  - [V]isually select [A]round [)]paren
+  --  - yiiq - [Y]ank [I]nside [I]+1 [Q]uote
+  --  - ci'  - [C]hange [I]nside [']quote
   require('mini.ai').setup {
+    -- NOTE: Avoid conflicts with the built-in incremental selection mappings on Neovim>=0.12 (see `:help treesitter-incremental-selection`)
     mappings = {
       around_next = 'aa',
       inside_next = 'ii',
@@ -195,31 +424,101 @@ do
     n_lines = 500,
   }
 
-  require('mini.files').setup {
-    options = {
-      permanent_delete = true,
-      use_as_default_explorer = true,
-      lsp_timeout = 1000,
-    },
-    windows = {
-      max_number = math.huge,
-      preview = true,
-      width_focus = 25,
-      width_nofocus = 15,
-      width_preview = 50,
-    },
-    content = { prefix = function() end },
-  }
-
-  vim.keymap.set('n', '<leader>ft', function() MiniFiles.open() end)
-
-  require('mini.pick').setup {}
+  -- Add/delete/replace surroundings (brackets, quotes, etc.)
+  --
+  -- - saiw) - [S]urround [A]dd [I]nner [W]ord [)]Paren
+  -- - sd'   - [S]urround [D]elete [']quotes
+  -- - sr)'  - [S]urround [R]eplace [)] [']
   require('mini.surround').setup()
 end
 
 do
-  vim.keymap.set('n', '<leader>sf', '<cmd>Pick files<CR>', { desc = '' })
-  vim.keymap.set('n', '<leader><leader>', '<cmd>Pick buffers<CR>', { desc = '' })
+  ---@type (string|vim.pack.Spec)[]
+  local telescope_plugins = {
+    gh 'nvim-lua/plenary.nvim',
+    gh 'nvim-telescope/telescope.nvim',
+    gh 'nvim-telescope/telescope-ui-select.nvim',
+    gh 'nvim-telescope/telescope-file-browser.nvim',
+  }
+
+  vim.pack.add(telescope_plugins)
+
+  require('telescope').setup {
+    defaults = {},
+    pickers = {
+      find_files = {
+        find_command = { 'rg', '--files', '--hidden', '--glob', '!**/.git/*' },
+      },
+    },
+    extensions = {
+      ['ui-select'] = { require('telescope.themes').get_dropdown() },
+      file_browser = {
+        preview = {
+          ls_short = true,
+        },
+      },
+    },
+  }
+
+  pcall(require('telescope').load_extension, 'ui-select')
+
+  local builtin = require 'telescope.builtin'
+  vim.keymap.set('n', '<leader>sh', builtin.help_tags, { desc = '[S]earch [H]elp' })
+  vim.keymap.set('n', '<leader>sk', builtin.keymaps, { desc = '[S]earch [K]eymaps' })
+  vim.keymap.set('n', '<leader>sf', builtin.find_files, { desc = '[S]earch [F]iles' })
+  vim.keymap.set('n', '<leader>ss', builtin.builtin, { desc = '[S]earch [S]elect Telescope' })
+  vim.keymap.set({ 'n', 'v' }, '<leader>sw', builtin.grep_string, { desc = '[S]earch current [W]ord' })
+  vim.keymap.set('n', '<leader>sg', builtin.live_grep, { desc = '[S]earch by [G]rep' })
+  vim.keymap.set('n', '<leader>sd', builtin.diagnostics, { desc = '[S]earch [D]iagnostics' })
+  vim.keymap.set('n', '<leader>sr', builtin.resume, { desc = '[S]earch [R]esume' })
+  vim.keymap.set('n', '<leader>s.', builtin.oldfiles, { desc = '[S]earch Recent Files ("." for repeat)' })
+  vim.keymap.set('n', '<leader>sc', builtin.commands, { desc = '[S]earch [C]ommands' })
+  vim.keymap.set('n', '<leader><leader>', builtin.buffers, { desc = '[ ] Find existing buffers' })
+
+  vim.api.nvim_create_autocmd('LspAttach', {
+    group = vim.api.nvim_create_augroup('telescope-lsp-attach', { clear = true }),
+    callback = function(event)
+      local buf = event.buf
+
+      vim.keymap.set('n', 'grr', builtin.lsp_references, { buffer = buf, desc = '[G]oto [R]eferences' })
+
+      vim.keymap.set('n', 'gri', builtin.lsp_implementations, { buffer = buf, desc = '[G]oto [I]mplementation' })
+
+      vim.keymap.set('n', 'grd', builtin.lsp_definitions, { buffer = buf, desc = '[G]oto [D]efinition' })
+
+      vim.keymap.set('n', 'gO', builtin.lsp_document_symbols, { buffer = buf, desc = 'Open Document Symbols' })
+
+      vim.keymap.set('n', 'gW', builtin.lsp_dynamic_workspace_symbols, { buffer = buf, desc = 'Open Workspace Symbols' })
+
+      vim.keymap.set('n', 'grt', builtin.lsp_type_definitions, { buffer = buf, desc = '[G]oto [T]ype Definition' })
+    end,
+  })
+
+  vim.keymap.set(
+    'n',
+    '<leader>/',
+    function()
+      builtin.current_buffer_fuzzy_find(require('telescope.themes').get_dropdown {
+        winblend = 0,
+        previewer = false,
+      })
+    end,
+    { desc = '[/] Fuzzily search in current buffer' }
+  )
+
+  vim.keymap.set(
+    'n',
+    '<leader>s/',
+    function()
+      builtin.live_grep {
+        grep_open_files = true,
+        prompt_title = 'Live Grep in Open Files',
+      }
+    end,
+    { desc = '[S]earch [/] in Open Files' }
+  )
+
+  vim.keymap.set('n', '<leader>sn', function() builtin.find_files { cwd = vim.fn.stdpath 'config', follow = true } end, { desc = '[S]earch [N]eovim files' })
 end
 
 do
@@ -236,17 +535,22 @@ do
       map('gra', vim.lsp.buf.code_action, '[G]oto Code [A]ction', { 'n', 'x' })
 
       map('grD', vim.lsp.buf.declaration, '[G]oto [D]eclaration')
+
+      local client = vim.lsp.get_client_by_id(event.data.client_id)
+
+      if client and client:supports_method('textDocument/inlayHint', event.buf) then
+        map('<leader>th', function() vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled { bufnr = event.buf }) end, '[T]oggle Inlay [H]ints')
+      end
     end,
   })
 
   ---@type table<string, vim.lsp.Config>
   local servers = {
-    -- gopls = {},
-    -- pyright = {},
-    -- rust_analyzer = {},
-
+    gopls = {},
+    ty = {},
+    rust_analyzer = {},
+    ts_ls = {},
     stylua = {},
-
     lua_ls = {
       on_init = function(client)
         client.server_capabilities.documentFormattingProvider = false
@@ -256,13 +560,15 @@ do
           if path ~= vim.fn.stdpath 'config' and (vim.uv.fs_stat(path .. '/.luarc.json') or vim.uv.fs_stat(path .. '/.luarc.jsonc')) then return end
         end
 
-        client.config.settings.Lua = vim.tbl_deep_extend('force', client.config.settings.Lua, {
+        local current_settings = client.config.settings --[[@as lspconfig.settings.lua_ls]]
+        client.config.settings.Lua = vim.tbl_deep_extend('force', current_settings.Lua, {
           runtime = {
             version = 'LuaJIT',
             path = { 'lua/?.lua', 'lua/?/init.lua' },
           },
           workspace = {
             checkThirdParty = false,
+            --  See https://github.com/neovim/nvim-lspconfig/issues/3189
             library = vim.tbl_extend('force', vim.api.nvim_get_runtime_file('', true), {
               '${3rd}/luv/library',
               '${3rd}/busted/library',
@@ -274,6 +580,7 @@ do
       settings = {
         Lua = {
           format = { enable = false },
+          semantic = { enable = false, annotation = false, keyword = false, variable = false },
         },
       },
     },
@@ -287,6 +594,10 @@ do
   }
 
   require('mason').setup {}
+
+  require('mason-lspconfig').setup {
+    automatic_enable = false,
+  }
 
   local ensure_installed = vim.tbl_keys(servers or {})
   vim.list_extend(ensure_installed, {})
@@ -318,8 +629,8 @@ do
       lsp_format = 'fallback',
     },
     formatters_by_ft = {
-      -- rust = { 'rustfmt' },
-      -- python = { "isort", "black" },
+      rust = { 'rustfmt' },
+      python = { 'ruff' },
     },
   }
 
@@ -333,17 +644,22 @@ do
       preset = 'default',
     },
 
+    appearance = {},
+
     completion = {
       documentation = { auto_show = false, auto_show_delay_ms = 500 },
+      menu = {
+        draw = {
+          columns = { { 'label', 'label_description', gap = 1 }, { 'kind' } },
+        },
+      },
     },
 
     sources = {
-      default = { 'lsp', 'path', 'snippets' },
+      default = { 'lsp', 'path' },
     },
 
-    -- snippets = { preset = 'luasnip' },
-
-    fuzzy = { implementation = 'lua' },
+    fuzzy = { implementation = 'prefer_rust_with_warning' },
 
     signature = { enabled = true },
   }
@@ -379,7 +695,7 @@ do
       if vim.tbl_contains(installed_parsers, language) then
         treesitter_try_attach(buf, language)
       elseif vim.tbl_contains(available_parsers, language) then
-        require('nvim-treesitter').install(language):await(function() treesitter_try_attach(buf, language) end)
+        -- require('nvim-treesitter').install(language):await(function() treesitter_try_attach(buf, language) end)
       else
         treesitter_try_attach(buf, language)
       end
@@ -388,190 +704,6 @@ do
 end
 
 do
-  local nsMiniFiles = vim.api.nvim_create_namespace 'mini_files_git'
-  local autocmd = vim.api.nvim_create_autocmd
-  local _, MiniFiles = pcall(require, 'mini.files')
-
-  local gitStatusCache = {}
-  local cacheTimeout = 2000
-  local uv = vim.uv or vim.loop
-
-  local function isSymlink(path)
-    local stat = uv.fs_lstat(path)
-    return stat and stat.type == 'link'
-  end
-
-  ---@type table<string, {symbol: string, hlGroup: string}>
-  ---@param status string
-  ---@return string symbol, string hlGroup
-  local function mapSymbols(status, is_symlink)
-    local statusMap = {
-      -- stylua: ignore start 
-      [" M"] = { symbol = "", hlGroup  = "MiniDiffSignChange"},
-      ["M "] = { symbol = "", hlGroup  = "MiniDiffSignChange"},
-      ["MM"] = { symbol = "", hlGroup  = "MiniDiffSignChange"},
-      ["A "] = { symbol = "", hlGroup  = "MiniDiffSignAdd"   },
-      ["AA"] = { symbol = "", hlGroup  = "MiniDiffSignAdd"   },
-      ["D "] = { symbol = "", hlGroup  = "MiniDiffSignDelete"},
-      ["AM"] = { symbol = "", hlGroup  = "MiniDiffSignChange"},
-      ["AD"] = { symbol = "", hlGroup  = "MiniDiffSignChange"},
-      ["R "] = { symbol = "", hlGroup  = "MiniDiffSignChange"},
-      ["U "] = { symbol = "", hlGroup  = "MiniDiffSignChange"},
-      ["UU"] = { symbol = "", hlGroup  = "MiniDiffSignAdd"   },
-      ["UA"] = { symbol = "", hlGroup  = "MiniDiffSignAdd"   },
-      ["??"] = { symbol = "", hlGroup  = "MiniDiffSignDelete"},
-      ["!!"] = { symbol = "", hlGroup  = "MiniDiffSignChange"},
-    }
-
-    local result = statusMap[status] or { symbol = '?', hlGroup = 'NonText' }
-    local gitSymbol = result.symbol
-    local gitHlGroup = result.hlGroup
-
-    local symlinkSymbol = is_symlink and '↩' or ''
-
-    local combinedSymbol = (symlinkSymbol .. gitSymbol):gsub('^%s+', ''):gsub('%s+$', '')
-    local combinedHlGroup = is_symlink and 'MiniDiffSignDelete' or gitHlGroup
-
-    return combinedSymbol, combinedHlGroup
-  end
-
-  ---@param cwd string
-  ---@param callback function
-  ---@return nil
-  local function fetchGitStatus(cwd, callback)
-    local clean_cwd = cwd:gsub('^minifiles://%d+/', '')
-    ---@param content table
-    local function on_exit(content)
-      if content.code == 0 then callback(content.stdout) end
-    end
-    ---@see vim.system
-    vim.system({ 'git', 'status', '--ignored', '--porcelain' }, { text = true, cwd = clean_cwd }, on_exit)
-  end
-
-  ---@param buf_id integer
-  ---@param gitStatusMap table
-  ---@return nil
-  local function updateMiniWithGit(buf_id, gitStatusMap)
-    vim.schedule(function()
-      local nlines = vim.api.nvim_buf_line_count(buf_id)
-      local cwd = vim.fs.root(buf_id, '.git')
-      local escapedcwd = cwd and vim.pesc(cwd)
-      escapedcwd = vim.fs.normalize(escapedcwd)
-
-      for i = 1, nlines do
-        local entry = MiniFiles.get_fs_entry(buf_id, i)
-        if not entry then break end
-        local relativePath = entry.path:gsub('^' .. escapedcwd .. '/', '')
-        local status = gitStatusMap[relativePath]
-
-        if status then
-          local symbol, hlGroup = mapSymbols(status, isSymlink(entry.path))
-          vim.api.nvim_buf_set_extmark(buf_id, nsMiniFiles, i - 1, 0, {
-            sign_text = symbol,
-            sign_hl_group = hlGroup,
-            priority = 2,
-          })
-          local line = vim.api.nvim_buf_get_lines(buf_id, i - 1, i, false)[1]
-          local nameStartCol = line:find(vim.pesc(entry.name)) or 0
-
-          if nameStartCol > 0 then
-            vim.api.nvim_buf_set_extmark(buf_id, nsMiniFiles, i - 1, nameStartCol - 1, {
-              end_col = nameStartCol + #entry.name - 1,
-              hl_group = hlGroup,
-            })
-          end
-        else
-        end
-      end
-    end)
-  end
-
-  ---@param content string
-  ---@return table
-  local function parseGitStatus(content)
-    local gitStatusMap = {}
-    for line in content:gmatch '[^\r\n]+' do
-      local status, filePath = string.match(line, '^(..)%s+(.*)')
-      local parts = {}
-      for part in filePath:gmatch '[^/]+' do
-        table.insert(parts, part)
-      end
-      local currentKey = ''
-      for i, part in ipairs(parts) do
-        if i > 1 then
-          currentKey = currentKey .. '/' .. part
-        else
-          currentKey = part
-        end
-        if i == #parts then
-          gitStatusMap[currentKey] = status
-        else
-          if not gitStatusMap[currentKey] then gitStatusMap[currentKey] = status end
-        end
-      end
-    end
-    return gitStatusMap
-  end
-
-  ---@param buf_id integer
-  ---@return nil
-  local function updateGitStatus(buf_id)
-    if not vim.fs.root(buf_id, '.git') then return end
-    local cwd = vim.fs.root(buf_id, '.git')
-    local currentTime = os.time()
-
-    if gitStatusCache[cwd] and currentTime - gitStatusCache[cwd].time < cacheTimeout then
-      updateMiniWithGit(buf_id, gitStatusCache[cwd].statusMap)
-    else
-      fetchGitStatus(cwd, function(content)
-        local gitStatusMap = parseGitStatus(content)
-        gitStatusCache[cwd] = {
-          time = currentTime,
-          statusMap = gitStatusMap,
-        }
-        updateMiniWithGit(buf_id, gitStatusMap)
-      end)
-    end
-  end
-
-  ---@return nil
-  local function clearCache() gitStatusCache = {} end
-
-  local function augroup(name) return vim.api.nvim_create_augroup('MiniFiles_' .. name, { clear = true }) end
-
-  autocmd('User', {
-    group = augroup 'start',
-    pattern = 'MiniFilesExplorerOpen',
-    callback = function()
-      local bufnr = vim.api.nvim_get_current_buf()
-      updateGitStatus(bufnr)
-    end,
-  })
-
-  autocmd('User', {
-    group = augroup 'close',
-    pattern = 'MiniFilesExplorerClose',
-    callback = function() clearCache() end,
-  })
-
-  autocmd('User', {
-    group = augroup 'update',
-    pattern = 'MiniFilesBufferUpdate',
-    callback = function(args)
-      local bufnr = args.data.buf_id
-      local cwd = vim.fs.root(bufnr, '.git')
-      if gitStatusCache[cwd] then updateMiniWithGit(bufnr, gitStatusCache[cwd].statusMap) end
-    end,
-  })
-
-  autocmd('BufWinEnter', {
-    group = augroup 'cursor',
-    callback = function(args)
-      local ft = vim.bo[args.buf].filetype
-      if not (ft:match 'commit' or ft:match 'rebase' or ft == 'xxd' or vim.wo.diff) then pcall(vim.cmd.normal, { [[g`"]], bang = true }) end
-    end,
-  })
+  require 'custom.plugins'
 end
-
--- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
